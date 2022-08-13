@@ -10,7 +10,12 @@ import {
 const router = express.Router();
 
 router.get("/", (_, res) => {
-  res.status(200).json({ msg: "Node API" });
+  const message = {
+    msg: "API para cadastro e autenticação de usuários",
+    Desenvolvedor: "Diego Lopes",
+    Repositorio: "https://github.com/diegodld/NodeApiAuth",
+  };
+  res.status(200).json(message);
 });
 
 router.get("/users", getUsers);
