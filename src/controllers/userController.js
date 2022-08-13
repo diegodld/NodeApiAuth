@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import bcrypt, { hash } from "bcrypt";
 
 class UserController {
   name;
@@ -18,11 +19,14 @@ class UserController {
       throw "O Email já existe!";
     }
 
+    const salt = await bcrypt.genSalt(12);
+    const passwordHash = await bcrypt.hash(this.password, salt);
+
     //Cadastro no banco de dados
     const user = new User({
       name: this.name,
       email: this.email,
-      password: this.password,
+      password: passwordHash,
     });
 
     try {
@@ -73,4 +77,24 @@ async function getUsers(req, res) {
   }
 }
 
-export { registerUser, getUsers };
+async function login(req, res) {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ msg: "Preencha todos os campos!" });
+  }
+  const user = await User.findOne({ email: email });
+
+  if (!user) {
+    return res.status(404).json({ msg: "Usuário não encontrado" });
+  }
+
+  const passwordMatch = await bcrypt.compare(password, user.password);
+
+  if (!passwordMatch) {
+    return res.status(404).json({ msg: "Senha inválida!" });
+  }
+
+  return res.status(200).json({ msg: "Logado!" });
+}
+
+export { registerUser, getUsers, login };
