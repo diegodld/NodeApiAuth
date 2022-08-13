@@ -62,7 +62,7 @@ async function registerUser(req, res) {
 
 async function getUsers(req, res) {
   try {
-    const users = await User.find();
+    const users = await User.find({}, "-password");
     return res.status(200).json(users);
   } catch (error) {
     return res.status(400).json({ msg: `Erro: ${error}` });
