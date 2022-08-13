@@ -37,15 +37,6 @@ class UserController {
       throw error;
     }
   }
-
-  static async findAll() {
-    try {
-      const users = await User.find();
-      return users;
-    } catch (error) {
-      throw error;
-    }
-  }
 }
 
 async function registerUser(req, res) {
@@ -71,7 +62,7 @@ async function registerUser(req, res) {
 
 async function getUsers(req, res) {
   try {
-    const users = await UserController.findAll();
+    const users = await User.find();
     return res.status(200).json(users);
   } catch (error) {
     return res.status(400).json({ msg: `Erro: ${error}` });
