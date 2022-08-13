@@ -1,5 +1,6 @@
 # NodeApiAuth
-API de cadastro e autenticação de usuários com nodeJS e MongoDB
+API de cadastro e autenticação de usuários com nodeJS e MongoDB.
+<p>Esse projeto foi desenvolvido para praticar meus conhecimentos de Nodejs e construção de APIs.</p>
 
 ## Rotas
 
