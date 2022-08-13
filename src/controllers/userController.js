@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import bcrypt, { hash } from "bcrypt";
+import jwt from "jsonwebtoken";
 
 class UserController {
   name;
@@ -94,7 +95,54 @@ async function login(req, res) {
     return res.status(404).json({ msg: "Senha inválida!" });
   }
 
-  return res.status(200).json({ msg: "Logado!" });
+  try {
+    const secret = process.env.SECRET;
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+      },
+      secret
+    );
+    return res
+      .status(200)
+      .json({ msg: "Autenticação realizada com sucesso!", token });
+  } catch (error) {
+    res.status(500).json({ msg: `Erro: ${error}` });
+  }
 }
 
-export { registerUser, getUsers, login };
+async function UserContent(req, res) {
+  const { id } = req.params;
+  try {
+    const user = await User.findById(id, "-password");
+
+    if (!user) {
+      return res.status(404).json({ msg: "Usuário não encontrado" });
+    }
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json({ msg: `Erro: ${error}` });
+  }
+}
+
+async function checkToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ msg: "Acesso não autorizado!" });
+  }
+
+  try {
+    const secret = process.env.SECRET;
+
+    jwt.verify(token, secret);
+
+    next();
+  } catch (error) {
+    return res.status(401).json({ msg: "Token Inválido!" });
+  }
+}
+
+export { registerUser, getUsers, login, UserContent, checkToken };

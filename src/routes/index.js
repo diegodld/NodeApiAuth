@@ -3,6 +3,8 @@ import {
   registerUser,
   getUsers,
   login,
+  UserContent,
+  checkToken,
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -12,6 +14,8 @@ router.get("/", (_, res) => {
 });
 
 router.get("/users", getUsers);
+
+router.get("/user/:id", checkToken, UserContent);
 
 router.post("/auth/register", registerUser);
 
